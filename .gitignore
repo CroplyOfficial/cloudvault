@@ -12,6 +12,8 @@ server/node_modules
 # production
 build
 
+server/src/config.ts
+
 # misc
 .DS_Store
 .env.local
