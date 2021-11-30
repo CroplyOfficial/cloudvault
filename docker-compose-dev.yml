@@ -5,11 +5,14 @@ services:
     image: cloudvault-api
     build: ./server
     ports:
-      - "5000:5000"
+      - "2525:2525"
     networks:
       - cloudvault-app
     depends_on:
       - mongo
+    volumes:
+      - ./server:/usr/src/cloudvault
+      - /usr/src/cloudvault/node_modules
 
   cloudvault-client:
     image: cloudvault-client
@@ -19,8 +22,12 @@ services:
       - "3000:3000"
     networks:
       - cloudvault-app
+    volumes:
+      - ./client:/usr/src/cloudvault
+      - /usr/src/cloudvault/node_modules
+
   mongo:
-    image: mongo:5.0-bionic
+    image: mongo:4.4-bionic
     ports:
       - "27017:27017"
     networks:
