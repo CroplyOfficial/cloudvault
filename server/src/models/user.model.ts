@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-const UserSchema = new mongoose.Model({
+const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
@@ -15,6 +16,7 @@ const UserSchema = new mongoose.Model({
 export interface IUser {
   username: string;
   password: string;
+  matchPassword: (pass: string) => Promise<boolean>;
 }
 
 export interface IUserDocument extends mongoose.Document, IUser {}
@@ -26,7 +28,7 @@ UserSchema.methods.matchPassword = async function (
   return await bcrypt.compare(enteredPassword, self.password);
 };
 
-UserSchema.pre("save", async function (next: any) {
+UserSchema.pre("save", async function (this: any, next: any) {
   const self: any = this;
   if (!self.isModified("password")) {
     next();

@@ -1,9 +1,10 @@
 FROM node:lts
 
-WORKDIR /usr/src/cloudvault
+RUN mkdir -p /usr/src/cloudvault-client
+WORKDIR /usr/src/cloudvault-client
 
-COPY ./package.json ./
-COPY ./yarn.lock ./
+COPY ./package.json /usr/src/cloudvault-client/
+COPY ./yarn.lock /usr/src/cloudvault-client/
 
 RUN yarn
 
