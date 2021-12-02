@@ -1,11 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import os from "os";
 
-function App() {
-  return (
-    <div className="App">
-      <h1>React App</h1>
-    </div>
-  );
-}
+export const App = () => {
+  useEffect(() => {}, []);
 
-export default App;
+  return <div className="App"></div>;
+};

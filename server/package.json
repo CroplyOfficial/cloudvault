@@ -8,7 +8,8 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.14"
+    "mongoose": "^6.0.14",
+    "public-ip": "^4.0.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

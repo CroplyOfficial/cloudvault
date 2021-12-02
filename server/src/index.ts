@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import { PORT, CONN_STRING } from "./config";
 import { connectToDB } from "./utils/mongo.util";
 import { errorHandler } from "./middleware/error.middleware";
