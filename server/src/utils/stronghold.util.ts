@@ -1,6 +1,7 @@
 import { promisify } from "util";
 import proc from "child_process";
 import path from "path";
+import { parse } from "path/posix";
 
 const exec = promisify(proc.exec);
 
@@ -24,7 +25,7 @@ export const createEncryptedVault = async (
   password: string
 ): Promise<void> => {
   const { stdout } = await exec(
-    `cargo run --example cli write --plain '${JSON.stringify(
+    `cargo run --example cli encrypt --plain '${JSON.stringify(
       data
     )}' --record-path "${record}" --pass "${password}"`,
     { cwd: stronghold_path }
@@ -48,7 +49,8 @@ export const readDataFromVault = async (
     { cwd: stronghold_path }
   );
   if (stdout) {
-    const data = JSON.parse(stdout.split("Data: ")[1]);
+    const raw = stdout.split("Data: ")[1];
+    const data = JSON.parse(JSON.parse(raw));
     return data;
   } else {
     throw new Error("unable to access the vault");
