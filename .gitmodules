@@ -1,0 +1,3 @@
+[submodule "server/stronghold"]
+	path = server/stronghold
+	url = https://github.com/iotaledger/stronghold.rs
