@@ -1,6 +1,10 @@
 import publicIp from "public-ip";
 import { networkInterfaces } from "os";
-import { PORT } from "../config";
+import { CONN_STRING, PORT, STRONGHOLD_SECRET } from "../config";
+import { createEncryptedVault, readDataFromVault } from "./stronghold.util";
+import { createUser } from "../functions/user.functions";
+import crypto from "crypto";
+import { connectToDB } from "./mongo.util";
 
 /**
  * Get details of the IP Address, both internal and external and
@@ -26,7 +30,8 @@ export const getIPDetails = async (): Promise<IIPDetails> => {
       if (net.family === "IPv4" && !net.internal) {
         if (
           String(net.address).startsWith("192.168.") ||
-          String(net.address).startsWith("10.0.")
+          String(net.address).startsWith("10.0.") ||
+          String(net.address).startsWith("172.16")
         ) {
           internalAddr = net.address;
         }
@@ -40,10 +45,77 @@ export const getIPDetails = async (): Promise<IIPDetails> => {
   };
 };
 
+/**
+ * Setup cloudvault and then send the setup data to the
+ * cloudvault instance
+ */
+
+export interface ICloudVaultConfig {
+  publicKey: string;
+  ipDetails: IIPDetails;
+}
+export interface IMasterRecord {
+  publicKey: string;
+  userId: string;
+}
+const setupCloudVault = async (
+  username: string,
+  password: string
+): Promise<ICloudVaultConfig> => {
+  const ipDetails = await getIPDetails();
+  const masterRecord = await readDataFromVault(
+    "master-record",
+    STRONGHOLD_SECRET
+  );
+
+  if (masterRecord) {
+    const { publicKey } = masterRecord as unknown as IMasterRecord;
+    return {
+      ipDetails,
+      publicKey,
+    };
+  } else {
+    const { user } = await createUser(username, password);
+    const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
+      modulusLength: 2048,
+    });
+
+    // plaintext exports of keys
+    const pubKey = publicKey.export({
+      type: "pkcs1",
+      format: "pem",
+    }) as string;
+    const privKey = privateKey.export({
+      type: "pkcs1",
+      format: "pem",
+    }) as string;
+
+    // create a stronghold vault with the privkey
+    await createEncryptedVault({ privKey }, "priv-key", STRONGHOLD_SECRET);
+
+    // create another vault which contains the user data
+    await createEncryptedVault(
+      { publicKey: pubKey, userId: user._id },
+      "master-record",
+      STRONGHOLD_SECRET
+    );
+
+    return {
+      ipDetails,
+      publicKey: pubKey,
+    };
+  }
+};
+
+// ANOTHER SET OF USELESS TESTS
 if (require.main === module) {
   const test = async () => {
     const ipDetails = await getIPDetails();
     console.log(ipDetails);
+    connectToDB(CONN_STRING);
+
+    const testSetup = await setupCloudVault("user", "pass");
+    console.log("setup details", testSetup);
   };
   test();
 }

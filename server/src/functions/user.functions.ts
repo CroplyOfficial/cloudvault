@@ -1,4 +1,4 @@
-import { User, IUser } from "../models/user.model";
+import { User, IUserDocument } from "../models/user.model";
 import { tokenize } from "../utils/token.util";
 
 /**
@@ -12,7 +12,7 @@ import { tokenize } from "../utils/token.util";
  */
 
 interface ICreateUser {
-  user: IUser;
+  user: IUserDocument;
   token: string;
 }
 export const createUser = async (
@@ -46,7 +46,7 @@ export const createUser = async (
  */
 
 interface ILoginUser {
-  user: IUser;
+  user: IUserDocument;
   token: string;
 }
 export const loginUser = async (
@@ -56,6 +56,7 @@ export const loginUser = async (
   const user = await User.findOne({ username });
   if (user) {
     const isMatch = await user.matchPassword(password);
+
     if (isMatch) {
       const token = tokenize(user._id);
       return {
