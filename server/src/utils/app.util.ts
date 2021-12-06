@@ -2,7 +2,6 @@ import publicIp from "public-ip";
 import { networkInterfaces } from "os";
 import { CONN_STRING, PORT, STRONGHOLD_SECRET } from "../config";
 import { createEncryptedVault, readDataFromVault } from "./stronghold.util";
-import { createUser } from "../functions/user.functions";
 import crypto from "crypto";
 import { connectToDB } from "./mongo.util";
 
@@ -58,10 +57,7 @@ export interface IMasterRecord {
   publicKey: string;
   userId: string;
 }
-const setupCloudVault = async (
-  username: string,
-  password: string
-): Promise<ICloudVaultConfig> => {
+export const getSetupDetails = async (): Promise<ICloudVaultConfig> => {
   const ipDetails = await getIPDetails();
   const masterRecord = await readDataFromVault(
     "master-record",
@@ -75,7 +71,6 @@ const setupCloudVault = async (
       publicKey,
     };
   } else {
-    const { user } = await createUser(username, password);
     const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
       modulusLength: 2048,
     });
@@ -95,7 +90,7 @@ const setupCloudVault = async (
 
     // create another vault which contains the user data
     await createEncryptedVault(
-      { publicKey: pubKey, userId: user._id },
+      { publicKey: pubKey },
       "master-record",
       STRONGHOLD_SECRET
     );
@@ -114,7 +109,7 @@ if (require.main === module) {
     console.log(ipDetails);
     connectToDB(CONN_STRING);
 
-    const testSetup = await setupCloudVault("user", "pass");
+    const testSetup = await getSetupDetails();
     console.log("setup details", testSetup);
   };
   test();
