@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model";
 import asyncHandler from "express-async-handler";
+import { JWT_SECRET } from "../config";
 
 /**
  * Ensure that the user is authorized by checking for a valid
@@ -16,7 +17,6 @@ const ensureAuthorized = asyncHandler(async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(" ")[1];
-      const JWT_SECRET: any = process.env.JWT_SECRET;
       const decoded: any = jwt.verify(token, JWT_SECRET);
       req.user = await User.findById(decoded.id).select("-password");
       next();

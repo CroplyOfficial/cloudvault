@@ -4,6 +4,7 @@ import { connectToDB } from "./utils/mongo.util";
 import { errorHandler } from "./middleware/error.middleware";
 import appRoutes from "./routes/app.routes";
 import userRoutes from "./routes/user.routes";
+import profileRoutes from "./routes/profile.routes";
 import cors from "cors";
 
 connectToDB(CONN_STRING);
@@ -30,6 +31,7 @@ app.use(express.json());
 
 app.use("/api/app", appRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/profiles", profileRoutes);
 
 app.use(errorHandler);
 

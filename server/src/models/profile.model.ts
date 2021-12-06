@@ -3,6 +3,7 @@ import mongoose, { mongo } from "mongoose";
 const ProfileSchema = new mongoose.Schema({
   name: {
     type: String,
+    unique: true,
     required: true,
   },
   creds: {

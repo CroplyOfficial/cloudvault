@@ -11,11 +11,15 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  profiles: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Profile" }],
+  },
 });
 
 export interface IUser {
   username: string;
   password: string;
+  profiles: mongoose.Schema.Types.ObjectId[];
   matchPassword: (pass: string) => Promise<boolean>;
 }
 
