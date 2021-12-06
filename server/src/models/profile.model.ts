@@ -22,5 +22,7 @@ export interface IProfile {
   creds: ICredConfig[];
 }
 
-const Profile = mongoose.model<IProfile>("Profile", ProfileSchema);
+export interface IProfileDocument extends mongoose.Document, IProfile {}
+
+const Profile = mongoose.model<IProfileDocument>("Profile", ProfileSchema);
 export { Profile };
