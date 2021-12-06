@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { getIPDetails } from "../utils/app.util";
+import { getSetupDetails } from "../utils/app.util";
 
 /**
  * A ping route to test if a server is actually running or not
@@ -18,17 +18,16 @@ export const pingController = asyncHandler(
 );
 
 /**
- * Get the IP details of the server and then send them as an object
+ * Onboarding controller for the user, setup the username and password
+ * and create a keypair for the said user and initiate the setup.
  *
- * @route GET /api/app
+ * @async
+ * @route POST /api/app
  */
 
-export const getIPController = asyncHandler(
-  async (req: Request, res: Response) => {
-    const ipDetails = await getIPDetails().catch((error) => {
-      console.error(error);
-      throw new Error("unable to resolve IP Details");
-    });
-    res.json(ipDetails);
+export const cloudVaultOnboarding = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const cloudVaultConfig = await getSetupDetails();
+    res.json(cloudVaultConfig);
   }
 );

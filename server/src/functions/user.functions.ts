@@ -1,9 +1,7 @@
 import { User, IUserDocument } from "../models/user.model";
 import { tokenize } from "../utils/token.util";
 
-/**
- * Create a new user and return the token and user information
- * IMPORTANT: Pass plaintext password it gets changed to a hash
+/** * Create a new user and return the token and user information * IMPORTANT: Pass plaintext password it gets changed to a hash
  * during the pre-save hook on mongo :)
  *
  * @param {String} username - username to create
@@ -19,8 +17,8 @@ export const createUser = async (
   username: string,
   password: string
 ): Promise<ICreateUser> => {
-  const userExists = await User.findOne({ username });
-  if (!userExists) {
+  const userExists = await User.find();
+  if (!userExists || userExists.length < 1) {
     const user = await User.create({
       username,
       password,
@@ -56,7 +54,6 @@ export const loginUser = async (
   const user = await User.findOne({ username });
   if (user) {
     const isMatch = await user.matchPassword(password);
-
     if (isMatch) {
       const token = tokenize(user._id);
       return {
