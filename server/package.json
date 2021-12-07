@@ -4,8 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@iota/identity-wasm": "^0.4.0",
+    "@types/bs58": "^4.0.1",
     "@types/cors": "^2.8.12",
     "bcryptjs": "^2.4.3",
+    "bs58": "^4.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-async-handler": "^1.2.0",

@@ -6,7 +6,7 @@ const splitNChars = (txt: string, num: number): string[] => {
   return result;
 };
 
-const minifyRSAPublicKey = (key: string) => {
+export const minifyRSAPublicKey = (key: string) => {
   const rawData = key
     .split("-----BEGIN RSA PUBLIC KEY-----\n")[1]
     .split("-----END RSA PUBLIC KEY")[0]
@@ -14,7 +14,7 @@ const minifyRSAPublicKey = (key: string) => {
   return rawData.join("");
 };
 
-const convertToPrivatePEM = (minified: string) => {
+export const convertToPrivatePEM = (minified: string) => {
   let rawData = splitNChars(minified, 64);
   if (!rawData) throw new Error("invalid key");
   const multilineBase64 = rawData.join("\n");
@@ -25,7 +25,7 @@ const convertToPrivatePEM = (minified: string) => {
   );
 };
 
-const minifyRSAPrivateKey = (key: string) => {
+export const minifyRSAPrivateKey = (key: string) => {
   const rawData = key
     .split("-----BEGIN RSA PRIVATE KEY-----\n")[1]
     .split("-----END RSA PRIVATE KEY")[0]
@@ -33,7 +33,7 @@ const minifyRSAPrivateKey = (key: string) => {
   return rawData.join("");
 };
 
-const convertToPublicPEM = (minified: string) => {
+export const convertToPublicPEM = (minified: string) => {
   let rawData = splitNChars(minified, 64);
   if (!rawData) throw new Error("invalid key");
   const multilineBase64 = rawData.join("\n");

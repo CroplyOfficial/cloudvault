@@ -11,6 +11,9 @@ const ProfileSchema = new mongoose.Schema({
     required: true,
     default: [],
   },
+  authorized: {
+    type: [{ type: String }],
+  },
 });
 
 export interface ICredConfig {
@@ -21,6 +24,7 @@ export interface ICredConfig {
 export interface IProfile {
   name: string;
   creds: ICredConfig[];
+  authorized?: string[];
 }
 
 export interface IProfileDocument extends mongoose.Document, IProfile {}
