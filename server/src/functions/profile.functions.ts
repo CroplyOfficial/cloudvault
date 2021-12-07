@@ -1,10 +1,5 @@
 import { IUserDocument, User } from "../models/user.model";
-import {
-  ICredConfig,
-  IProfile,
-  IProfileDocument,
-  Profile,
-} from "../models/profile.model";
+import { IProfile, IProfileDocument, Profile } from "../models/profile.model";
 import { convertToPublicPEM } from "../utils/crypto.util";
 import { Client, Network, Config } from "@iota/identity-wasm/node";
 import crypto from "crypto";
@@ -176,6 +171,7 @@ const verifyCredential = async (
 
 interface ICredResult {
   vc: Record<string, unknown>;
+  excluded: string[];
   result: {
     DVID: boolean;
     VC: boolean;
@@ -185,12 +181,15 @@ interface IProfileResult {
   name: string;
   creds: ICredResult[];
 }
-const verifyProfile = async (profile: IProfile): Promise<IProfileResult> => {
+export const verifyProfile = async (
+  profile: IProfile
+): Promise<IProfileResult> => {
   const creds = await Promise.all(
     profile.creds.map(async (cred) => {
       const result = await verifyCredential(cred.vc);
       return {
         vc: cred.vc,
+        excluded: cred.excluded,
         result,
       };
     })
@@ -200,4 +199,30 @@ const verifyProfile = async (profile: IProfile): Promise<IProfileResult> => {
     name,
     creds,
   };
+};
+
+/**
+ * See if the origin IP is authorized and then if so return the stuff
+ * to that said user
+ */
+
+export const handleValidationRequest = async (
+  ip: string,
+  profileId: string
+): Promise<IProfileResult> => {
+  let addr;
+  if (ip.startsWith("http")) {
+    const { address } = await dns.lookup(ip.split("://")[1]);
+    addr = address;
+  } else {
+    addr = ip;
+  }
+  const profile = await Profile.findById(profileId);
+  if (!profile) throw new Error("profile not found");
+  if (profile.authorized?.includes(addr)) {
+    const result = await verifyProfile(profile);
+    return result;
+  } else {
+    throw new Error("Client is not authorized to access this profile");
+  }
 };

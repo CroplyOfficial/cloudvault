@@ -4,6 +4,7 @@ import {
   editProfilesController,
   indexProfilesController,
   newProfileController,
+  validateProfileController,
 } from "../controllers/profile.controller";
 import { Router } from "express";
 
@@ -20,5 +21,7 @@ router
   .route("/:id")
   .patch(ensureAuthorized, editProfilesController)
   .delete(ensureAuthorized, deleteProfileController);
+
+router.route("/validate/:id").get(validateProfileController);
 
 export default router;
