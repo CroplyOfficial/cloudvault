@@ -4,6 +4,8 @@ import {
   pingController,
 } from "../controllers/app.controllers";
 
+// ROOT : /api/app
+
 const router = Router();
 
 router.route("/").get(cloudVaultOnboarding);

@@ -62,8 +62,8 @@ export const App = () => {
             <h2>SCAN WITH VIRA APP</h2>
             <p>
               Your CloudVault is a secure extension of your Vira App running on
-              the cloud, your CloudVault can permission certain people or
-              websites to be always able to access parts of your verifiable
+              the cloud, your CloudVault can permission certain websites or
+              domains to be always able to access parts of your verifiable
               credentials as you wish.
               <br />
               <br />
